@@ -297,11 +297,14 @@ export default function StudyFilesPage() {
       }
 
       // 2. Try to delete from database if it exists there
-      await supabase
+      const { error: dbError } = await supabase
         .from("study_files")
         .delete()
-        .eq("path", filename)
-        .catch((err) => console.error("Error deleting from database:", err));
+        .eq("path", filename);
+      
+      if (dbError) {
+        console.error("Error deleting from database:", dbError);
+      }
 
       // 3. Update local state
       setFiles(files.filter((file) => file.id !== id));
